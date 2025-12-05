@@ -1,0 +1,11 @@
+# Lakehouse Architect Agent Dependencies
+
+# Core DSPy framework
+dspy>=2.5.0
+
+# Databricks DSPy integration
+databricks-dspy>=0.1.0
+
+# Databricks SDK for authentication
+databricks-sdk>=0.20.0
+

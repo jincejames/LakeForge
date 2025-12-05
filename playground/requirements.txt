@@ -1,0 +1,7 @@
+# DSPy + Databricks Prompt Generation Dependencies
+# Install with: pip install -r requirements.txt
+
+dspy>=2.5.0
+databricks-dspy
+mlflow>=2.15.0
+

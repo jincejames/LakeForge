@@ -1,0 +1,15 @@
+# Cursor Rules for Databricks ML Exercise Project
+
+## Core Rules
+
+### File Extensions and Notebooks
+- **ALWAYS use .py extensions when creating notebooks** (not .ipynb)
+- Databricks notebooks should be Python files with magic commands if needed
+
+### Accuracy and Verification
+- **Double check all work** before completing tasks
+- **Never invent URLs** - only use URLs that have been explicitly seen in the codebase or documentation
+- **Never correct spelling in paths or file names** - preserve exact spelling as provided (e.g., if given "volune", keep it as "volune", do NOT change to "volume")
+
+### Code Quality
+- **Don't use print statements** - use structured logging instead
