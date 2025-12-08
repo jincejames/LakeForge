@@ -1,0 +1,16 @@
+visual_id,dashboard_name,visualization_type,primary_metric,x_axis,y_axis,color_by,notes
+V1,Sales Overview,filter-date-range-picker,,,,,metric_date is filter field
+V2,Sales Overview,filter-multi-select,,,,,channel is filter field
+V3,Sales Overview,Counter,total_sales,,,,
+V4,Sales Overview,Line,avg_order_value,metric_date,avg_order_value,,
+V5,Sales Overview,Line,total_orders,metric_date,total_orders,channel,
+V6,Product Performance,filter-single-select,,,,,category is filter field
+V7,Product Performance,Bar,product_revenue,product_revenue,product_name,,
+V8,Product Performance,Heatmap,returns_rate,month,product_name,returns_rate,
+V9,Customer 360 & AI Features,filter-multi-select,,,,,country_code is filter field
+V10,Customer 360 & AI Features,Scatter,churn_risk_score,recency_days,total_spent,churn_risk_score,
+V11,Customer 360 & AI Features,Histogram,recency_days,recency_days,count,,30 bins
+V12,Cohort Retention,Heatmap,retention_rate,month_offset,cohort,retention_rate,
+V13,Executive Summary,Line,total_sales,month,total_sales,,last 12 months
+V14,Executive Summary,Line,total_orders,month,total_orders,channel,last 12 months
+

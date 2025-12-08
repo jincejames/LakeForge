@@ -1,0 +1,6 @@
+source_table,target_table,transformation_name,description,expression_sql,notes
+silver.fact_order,gold.sales_dashboard_metrics,agg_daily_sales,"Daily totals and AOV","SUM(total_amount), COUNT(*) as total_orders, SUM(total_amount)/NULLIF(COUNT(*),0)","Group by order_date"
+silver.fact_order,gold.sales_dashboard_metrics,split_by_channel,"Web vs store counts","SUM(CASE WHEN channel='WEB' THEN 1 ELSE 0 END)","Group by order_date"
+silver.fact_order_item,gold.product_sales_by_month,monthly_product_sales,"Units & revenue per product/month","SUM(quantity), SUM(extended_amount)","Group by product_id, month(order_date)"
+silver.dim_customer|silver.fact_order,gold.customer_lifetime_value_features,clv_features,"Spend, frequency, recency","SUM(total_amount), COUNT(order_id), DATEDIFF(max(order_date), min(order_date))","Window functions per customer_id"
+silver.fact_order,gold.cohort_retention,cohort_build,"Build cohorts and retention","MIN(order_date) as cohort_month; retention over month_offset","Use dim_time joins"

@@ -1,0 +1,15 @@
+measure_name,business_definition,source_table,source_field,aggregation,grain,default_filters,dimensionality,notes
+total_sales,Sum of revenue over period,gold.sales_dashboard_metrics,total_sales,SUM,Day,none,date; channel,Primary KPI for revenue
+total_orders,Count of orders over period,gold.sales_dashboard_metrics,total_orders,SUM,Day,none,date; channel,Volume KPI
+avg_order_value,Revenue per order,gold.sales_dashboard_metrics,avg_order_value,AVG,Day,none,date; channel,Efficiency KPI
+orders_web,Orders via web channel,gold.sales_dashboard_metrics,orders_web,SUM,Day,channel=WEB,date,Channel split
+orders_store,Orders via store channel,gold.sales_dashboard_metrics,orders_store,SUM,Day,channel=STORE,date,Channel split
+units_sold,Total units sold per product-month,gold.product_sales_by_month,units_sold,SUM,Month,none,product; month,Product volume KPI
+product_revenue,Total product revenue per month,gold.product_sales_by_month,revenue,SUM,Month,none,product; month,Product revenue KPI
+returns_rate,Percentage of returned units,gold.product_sales_by_month,returns_rate,AVG,Month,none,product; month,Quality KPI (0–100%)
+customer_total_spent,Lifetime revenue per customer,gold.customer_lifetime_value_features,total_spent,SUM,Customer,none,customer,CLV
+customer_order_count,Lifetime orders per customer,gold.customer_lifetime_value_features,order_count,SUM,Customer,none,customer,Frequency
+recency_days,Days since last order,gold.customer_lifetime_value_features,recency_days,AVG,Customer,none,customer,Engagement decay
+churn_risk_score,Model-ready churn risk score (0–100),gold.customer_lifetime_value_features,churn_risk_score,AVG,Customer,none,customer,AI feature; show mean/top decile
+active_customers,Active customers in cohort/time,gold.cohort_retention,active_customers,SUM,Cohort Month + Month Offset,none,cohort_month; month_offset,Retention numerator
+retention_rate,Retention percentage,gold.cohort_retention,retention_rate,AVG,Cohort Month + Month Offset,none,cohort_month; month_offset,Retention KPI (0–100%)

@@ -1,0 +1,41 @@
+source_table,target_table,transformation_name,description,expression_sql,notes
+bronze.incident,silver.incident_flattened,extract_opened_by_id,Extract sys_id from opened_by struct,opened_by.value AS opened_by_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_caller_id,Extract sys_id from caller_id struct,caller_id.value AS caller_id_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_assigned_to_id,Extract sys_id from assigned_to struct,assigned_to.value AS assigned_to_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_assignment_group_id,Extract sys_id from assignment_group struct,assignment_group.value AS assignment_group_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_resolved_by_id,Extract sys_id from resolved_by struct,resolved_by.value AS resolved_by_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_closed_by_id,Extract sys_id from closed_by struct,closed_by.value AS closed_by_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_parent_id,Extract sys_id from parent struct,parent.value AS parent_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_parent_incident_id,Extract sys_id from parent_incident struct,parent_incident.value AS parent_incident_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_caused_by_id,Extract sys_id from caused_by struct,caused_by.value AS caused_by_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_problem_id,Extract sys_id from problem_id struct,problem_id.value AS problem_id_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_rfc_id,Extract sys_id from rfc struct,rfc.value AS rfc_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_cmdb_ci_id,Extract sys_id from cmdb_ci struct,cmdb_ci.value AS cmdb_ci_id,Configuration item reference
+bronze.incident,silver.incident_flattened,extract_business_service_id,Extract sys_id from business_service struct,business_service.value AS business_service_id,Service reference
+bronze.incident,silver.incident_flattened,extract_service_offering_id,Extract sys_id from service_offering struct,service_offering.value AS service_offering_id,Service offering reference
+bronze.incident,silver.incident_flattened,extract_company_id,Extract sys_id from company struct,company.value AS company_id,Company reference
+bronze.incident,silver.incident_flattened,extract_location_id,Extract sys_id from location struct,location.value AS location_id,Location reference
+bronze.incident,silver.incident_flattened,extract_reopened_by_id,Extract sys_id from reopened_by struct,reopened_by.value AS reopened_by_id,Null-safe struct access
+bronze.incident,silver.incident_flattened,extract_contract_id,Extract sys_id from contract struct,contract.value AS contract_id,Contract reference
+bronze.incident,silver.incident_flattened,derive_state_name,Map state code to human-readable name,"CASE state WHEN 1 THEN 'New' WHEN 2 THEN 'In Progress' WHEN 3 THEN 'On Hold' WHEN 6 THEN 'Resolved' WHEN 7 THEN 'Closed' WHEN 8 THEN 'Canceled' ELSE 'Unknown' END AS state_name",ServiceNow standard states
+bronze.incident,silver.incident_flattened,derive_priority_name,Map priority code to name,"CASE priority WHEN 1 THEN 'Critical' WHEN 2 THEN 'High' WHEN 3 THEN 'Moderate' WHEN 4 THEN 'Low' WHEN 5 THEN 'Planning' ELSE 'Unknown' END AS priority_name",Priority mapping
+bronze.incident,silver.incident_flattened,derive_urgency_name,Map urgency code to name,"CASE urgency WHEN 1 THEN 'High' WHEN 2 THEN 'Medium' WHEN 3 THEN 'Low' ELSE 'Unknown' END AS urgency_name",Urgency mapping
+bronze.incident,silver.incident_flattened,derive_impact_name,Map impact code to name,"CASE impact WHEN 1 THEN 'High' WHEN 2 THEN 'Medium' WHEN 3 THEN 'Low' ELSE 'Unknown' END AS impact_name",Impact mapping
+bronze.incident,silver.incident_flattened,derive_opened_date,Extract date from opened_at timestamp,TO_DATE(opened_at) AS opened_date,Date dimension join key
+bronze.incident,silver.incident_flattened,derive_resolved_date,Extract date from resolved_at timestamp,TO_DATE(resolved_at) AS resolved_date,Date dimension join key
+bronze.incident,silver.incident_flattened,derive_closed_date,Extract date from closed_at timestamp,TO_DATE(closed_at) AS closed_date,Date dimension join key
+bronze.incident,silver.incident_flattened,derive_is_resolved,Flag if incident has been resolved,state IN (6) AS is_resolved,Boolean convenience flag
+bronze.incident,silver.incident_flattened,derive_is_closed,Flag if incident is closed,state = 7 AS is_closed,Boolean convenience flag
+bronze.incident,silver.incident_flattened,derive_time_to_resolve,Calculate hours from open to resolve,"ROUND((UNIX_TIMESTAMP(resolved_at) - UNIX_TIMESTAMP(opened_at)) / 3600.0, 2) AS time_to_resolve_hours",Null if not resolved
+bronze.incident,silver.incident_flattened,derive_time_to_close,Calculate hours from open to close,"ROUND((UNIX_TIMESTAMP(closed_at) - UNIX_TIMESTAMP(opened_at)) / 3600.0, 2) AS time_to_close_hours",Null if not closed
+bronze.incident,silver.incident_flattened,derive_first_response,Calculate hours to first work activity,"ROUND((UNIX_TIMESTAMP(work_start) - UNIX_TIMESTAMP(opened_at)) / 3600.0, 2) AS first_response_hours",Null if no work_start
+bronze.incident,silver.incident_flattened,convert_calendar_duration,Use calendar_stc as duration seconds,calendar_stc AS calendar_duration_seconds,Already in seconds
+bronze.incident,silver.incident_flattened,convert_business_duration,Use business_stc as duration seconds,business_stc AS business_duration_seconds,Already in seconds
+bronze.incident,silver.incident_flattened,normalize_category,Normalize category to uppercase,UPPER(TRIM(category)) AS category,Consistent casing
+bronze.incident,silver.incident_flattened,normalize_subcategory,Normalize subcategory to uppercase,UPPER(TRIM(subcategory)) AS subcategory,Consistent casing
+bronze.incident,silver.incident_flattened,normalize_contact_type,Normalize contact_type to uppercase,UPPER(TRIM(contact_type)) AS contact_type,Consistent casing
+bronze.incident,silver.incident_flattened,normalize_close_code,Normalize close_code to uppercase,UPPER(TRIM(close_code)) AS close_code,Consistent casing
+bronze.incident,silver.incident_flattened,add_processing_timestamp,Add silver layer processing time,CURRENT_TIMESTAMP() AS _silver_processed_at,Audit column
+bronze.incident,silver.incident_flattened,passthrough_scd2,Preserve SCD2 columns,"__START_AT, __END_AT, _databricks_deleted",LakeFlow managed columns
+bronze.incident,silver.incident_current,filter_current_records,Filter to current non-deleted records,__END_AT IS NULL AND _databricks_deleted = false,Current state view
+

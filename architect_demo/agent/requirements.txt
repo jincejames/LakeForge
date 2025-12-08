@@ -1,0 +1,11 @@
+# Core dependencies
+dspy>=2.5.0
+databricks-dspy>=0.1.0
+mlflow>=2.10.0
+
+# For specs loading
+pyyaml>=6.0
+
+# Databricks SDK (for authentication)
+databricks-sdk>=0.20.0
+

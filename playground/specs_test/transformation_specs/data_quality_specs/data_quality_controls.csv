@@ -1,0 +1,12 @@
+layer_from,layer_to,table,name,criticality,function,col_name,min_limit,max_limit,allowed,regex,expression,msg,filter
+bronze,silver,silver.fact_order,valid_order_id,error,"is_not_null",order_id,,,,,,Ensure key presence,
+bronze,silver,silver.fact_order,non_negative_amount,error,"is_not_less_than",total_amount,0,,,,,No negative revenue,
+bronze,silver,silver.fact_order,valid_currency,warn,"is_in_list",currency_code,,,"['USD','EUR','GBP','INR','JPY']",,,Conform to ISO set,
+bronze,silver,silver.fact_order,no_duplicate_order,error,"sql_expression",,,,,,COUNT(DISTINCT order_id) = COUNT(order_id),Prevent duplicates,
+bronze,silver,silver.fact_order,parsable_order_ts,error,"sql_expression",,,,,,to_timestamp(order_timestamp) IS NOT NULL,Timestamp integrity,
+bronze,silver,silver.fact_order_item,valid_quantity,error,"is_in_range",quantity,1,9999,,,,Reasonable quantity bounds,
+bronze,silver,silver.dim_customer,valid_email_format,warn,"regex_match",email,,,,"^[A-Za-z0-9.*%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$",,"Soft check on email",
+bronze,silver,silver.dim_product,valid_price,error,"is_not_less_than",list_price,0,,,,,No negative prices,
+silver,gold,gold.product_sales_by_month,valid_monthly_units,error,"is_not_less_than",units_sold,0,,,,,No negative units,
+silver,gold,gold.customer_lifetime_value_features,referential_integrity,error,"sql_expression",,,,,,customer_id IN (SELECT customer_id FROM silver.dim_customer WHERE is_current = true),Gold references current dims,
+silver,gold,gold.cohort_retention,valid_retention_bounds,error,"is_in_range",retention_rate,0,100,,,,"Percent in [0,100]",

@@ -1,0 +1,24 @@
+resources:
+  pipelines:
+    pipeline_servicenow_incident_lakeforge:
+      name: servicenow_incident_lakeforge
+      ingestion_definition:
+        connection_name: servicenow_production
+        objects:
+          - table:
+              source_schema: default
+              source_table: incident
+              destination_catalog: main
+              destination_schema: servicenow_incident_lakeforge
+              table_configuration:
+                scd_type: SCD_TYPE_2
+                primary_keys:
+                  - sys_id
+        source_type: SERVICENOW
+      schedule:
+        quartz_cron_expression: "0 0 */2 * * ?"
+        timezone_id: UTC
+      schema: servicenow_incident_lakeforge
+      catalog: main
+      continuous: false
+

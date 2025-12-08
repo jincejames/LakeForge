@@ -1,0 +1,25 @@
+resources:
+  pipelines:
+    pipeline_service_now_mb_with_historization_demo_lakeforge:
+      name: service_now_mb_with_historization_demo_lakeforge
+      ingestion_definition:
+        connection_name: test_koch
+        objects:
+          - table:
+              source_schema: default
+              source_table: incident
+              destination_catalog: main
+              destination_schema: service_now_mb_with_historization_demo_lakeforge
+              table_configuration:
+                scd_type: SCD_TYPE_2
+          - table:
+              source_schema: default
+              source_table: incident_task
+              destination_catalog: main
+              destination_schema: service_now_mb_with_historization_demo_lakeforge
+              table_configuration:
+                scd_type: SCD_TYPE_2
+        source_type: SERVICENOW
+      schema: service_now_mb_with_historization_demo_lakeforge
+      catalog: main
+      usage_policy_id: f20a71f9-ec07-4b92-a33f-9f3d3f23c428

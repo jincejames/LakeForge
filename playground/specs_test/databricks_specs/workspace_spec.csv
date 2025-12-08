@@ -1,0 +1,2 @@
+env_name,workspace_url,sql_warehouse_id,default_catalog_name,notes
+dev,"https://adb-2769959830950131.11.azuredatabricks.net","c0f912968139b56f",demo_dev,"Attach dev workspace to shared metastore; use dev catalog for isolation"

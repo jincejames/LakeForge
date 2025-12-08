@@ -1,0 +1,6 @@
+- Refer to specs/dashboard_specs/sample_dashboard.json as an example for creating the dashboard.
+- Generate SQL queries with the needed datasets/queryLines have new line char at the end of each line.
+- Validate SQL queries using SQL statement execution REST API to make sure it runs sucessfully.
+- Please find the details specs for source tables, queries generation, widget type, widget configuration and other layout elemens for json in the specs csv files.
+- Make sure that all the widgets are configured correctly.
+- Deploy them as dashboard resoures using databricks asset bundle.

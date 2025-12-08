@@ -1,0 +1,3 @@
+- Make sure to columns datatypes in table create scipts match the specs.
+- Make sure that sample data load script maps the column datatype correctly and also databricks job definition to run it.
+- Scripts should support changes to table schema (i.e. add columns)

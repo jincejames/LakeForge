@@ -1,0 +1,533 @@
+{
+  "datasets": [
+    {
+      "name": "sales01",
+      "displayName": "Sales",
+      "queryLines": [
+        "SELECT\n",
+        " CAST(order_date AS TIMESTAMP) AS order_date,\n",
+        " region,\n",
+        " product_name,\n",
+        " units,\n",
+        " revenue\n",
+        "FROM main.analytics.sales_daily"
+      ]
+    },
+    {
+      "name": "rides01",
+      "displayName": "Rides",
+      "queryLines": [
+        "SELECT\n",
+        " trip_distance,\n",
+        " fare_amount,\n",
+        " day_of_week,\n",
+        " tpep_pickup_datetime AS pickup_time\n",
+        "FROM samples.nyctaxi.trips"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "pg01",
+      "displayName": "Overview",
+      "layout": [
+        {
+          "position": { "x": 0, "y": 0, "width": 2, "height": 1 },
+          "widget": {
+            "name": "wCounterRevenue",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    { "name": "sum(revenue)", "expression": "SUM(`revenue`)" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(revenue)",
+                  "displayName": "Revenue",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": { "type": "max", "places": 2 }
+                  },
+                  "style": {
+                    "color": "#00A972",
+                    "bold": true
+                  }
+                }
+              },
+              "frame": { "showTitle": true, "title": "Total Revenue" }
+            }
+          }
+        },
+        {
+          "position": { "x": 2, "y": 0, "width": 2, "height": 1 },
+          "widget": {
+            "name": "wCounterUnits",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    { "name": "sum(units)", "expression": "SUM(`units`)" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(units)",
+                  "displayName": "Units",
+                  "format": {
+                    "type": "number",
+                    "decimalPlaces": { "type": "max", "places": 0 }
+                  },
+                  "style": {
+                    "color": "#077A9D",
+                    "bold": true
+                  }
+                }
+              },
+              "frame": { "showTitle": true, "title": "Total Units" }
+            }
+          }
+        },
+        {
+          "widget": {
+            "name": "wFilterDateRange",
+            "queries": [
+              {
+                "name": "filter_order_date_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    { "name": "order_date", "expression": "`order_date`" },
+                    { "name": "order_date_associativity", "expression": "COUNT_IF(`associative_filter_predicate_group`)" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  { "fieldName": "order_date", "queryName": "filter_order_date_query" }
+                ]
+              },
+              "frame": { "showTitle": true, "title": "Date Range" }
+            }
+          },
+          "position": { "x": 4, "y": 0, "width": 2, "height": 1 }
+        },
+        {
+          "widget": {
+            "name": "wFilterRegion",
+            "queries": [
+              {
+                "name": "filter_region_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    { "name": "region", "expression": "`region`" },
+                    { "name": "region_associativity", "expression": "COUNT_IF(`associative_filter_predicate_group`)" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  { "fieldName": "region", "queryName": "filter_region_query" }
+                ]
+              },
+              "frame": { "showTitle": true, "title": "Region Filter" }
+            }
+          },
+          "position": { "x": 4, "y": 1, "width": 2, "height": 2 }
+        },
+        {
+          "widget": {
+            "name": "wFilterProduct",
+            "queries": [
+              {
+                "name": "filter_product_name_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    { "name": "product_name", "expression": "`product_name`" },
+                    { "name": "product_name_associativity", "expression": "COUNT_IF(`associative_filter_predicate_group`)" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  { "fieldName": "product_name", "queryName": "filter_product_name_query" }
+                ]
+              },
+              "frame": { "showTitle": true, "title": "Product Filter" }
+            }
+          },
+          "position": { "x": 4, "y": 3, "width": 2, "height": 2 }
+        },
+        {
+          "position": { "x": 0, "y": 1, "width": 4, "height": 4 },
+          "widget": {
+            "name": "wBarDailyRevenue",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    {
+                      "name": "daily(order_date)",
+                      "expression": "DATE_TRUNC(\"DAY\", `order_date`)"
+                    },
+                    { "name": "sum(revenue)", "expression": "SUM(`revenue`)" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(order_date)",
+                  "scale": { "type": "temporal" },
+                  "axis": { "title": "Order Date" },
+                  "displayName": "Order Date"
+                },
+                "y": {
+                  "fieldName": "sum(revenue)",
+                  "scale": { "type": "quantitative" },
+                  "axis": { "hideTitle": true },
+                  "displayName": "Revenue"
+                },
+                "color": { "legend": { "hide": true } }
+              },
+              "frame": { "showTitle": true, "title": "Daily Revenue" }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 5, "width": 6, "height": 4 },
+          "widget": {
+            "name": "wLineUnitsByRegion",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    {
+                      "name": "daily(order_date)",
+                      "expression": "DATE_TRUNC(\"DAY\", `order_date`)"
+                    },
+                    { "name": "sum(units)", "expression": "SUM(`units`)" },
+                    { "name": "region", "expression": "`region`" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(order_date)",
+                  "scale": { "type": "temporal" },
+                  "axis": { "title": "Date" }
+                },
+                "y": {
+                  "fieldName": "sum(units)",
+                  "scale": { "type": "quantitative" },
+                  "axis": { "title": "Units" }
+                },
+                "color": {
+                  "fieldName": "region",
+                  "scale": { "type": "categorical" },
+                  "legend": { "title": "Region" }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Units by Region (Daily)"
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 9, "width": 3, "height": 4 },
+          "widget": {
+            "name": "wScatterFareDistance",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "rides01",
+                  "fields": [
+                    { "name": "trip_distance", "expression": "`trip_distance`" },
+                    { "name": "fare_amount", "expression": "`fare_amount`" },
+                    { "name": "day_of_week", "expression": "`day_of_week`" }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "trip_distance",
+                  "scale": { "type": "quantitative" },
+                  "axis": { "title": "Trip distance" }
+                },
+                "y": {
+                  "fieldName": "fare_amount",
+                  "scale": { "type": "quantitative" },
+                  "axis": { "title": "Fare" }
+                },
+                "color": {
+                  "fieldName": "day_of_week",
+                  "scale": { "type": "categorical" },
+                  "displayName": "Day of Week"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Fare vs Distance by Day"
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 3, "y": 9, "width": 3, "height": 4 },
+          "widget": {
+            "name": "wPieRevenueByRegion",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    { "name": "region", "expression": "`region`" },
+                    { "name": "sum(revenue)", "expression": "SUM(`revenue`)" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "color": {
+                  "fieldName": "region",
+                  "scale": { "type": "categorical" },
+                  "legend": { "title": "Region" }
+                },
+                "value": { "fieldName": "sum(revenue)" }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Revenue Share by Region"
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 13, "width": 6, "height": 8 },
+          "widget": {
+            "name": "wTableOrders",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  { "fieldName": "order_date", "displayName": "Date" },
+                  { "fieldName": "region", "displayName": "Region" },
+                  { "fieldName": "product_name", "displayName": "Product" },
+                  { "fieldName": "units", "displayName": "Units" },
+                  { "fieldName": "revenue", "displayName": "Revenue" }
+                ],
+                "paginationSize": "default",
+                "alignContent": "left",
+                "withRowNumber": false
+              },
+              "frame": { "showTitle": true, "title": "Orders" }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 21, "width": 6, "height": 4 },
+          "widget": {
+            "name": "wComboRevenueUnits",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    {
+                      "name": "daily(order_date)",
+                      "expression": "DATE_TRUNC(\"DAY\", `order_date`)"
+                    },
+                    { "name": "sum(revenue)", "expression": "SUM(`revenue`)" },
+                    { "name": "sum(units)", "expression": "SUM(`units`)" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(order_date)",
+                  "scale": { "type": "temporal" },
+                  "axis": { "title": "Date" }
+                },
+                "y": {
+                  "scale": { "type": "quantitative" },
+                  "fields": [
+                    { "fieldName": "sum(revenue)", "displayName": "Revenue" },
+                    { "fieldName": "sum(units)", "displayName": "Units" }
+                  ],
+                  "axis": { "title": "Values" }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Revenue and Units (Daily)"
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 25, "width": 6, "height": 4 },
+          "widget": {
+            "name": "wHeatmapRevenueByRegionProduct",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sales01",
+                  "fields": [
+                    { "name": "region", "expression": "`region`" },
+                    { "name": "product_name", "expression": "`product_name`" },
+                    { "name": "sum(revenue)", "expression": "SUM(`revenue`)" }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "heatmap",
+              "encodings": {
+                "x": {
+                  "fieldName": "region",
+                  "scale": { "type": "categorical" },
+                  "axis": { "title": "Region" }
+                },
+                "y": {
+                  "fieldName": "product_name",
+                  "scale": { "type": "categorical" },
+                  "axis": { "title": "Product" }
+                },
+                "color": {
+                  "fieldName": "sum(revenue)",
+                  "scale": { "type": "quantitative" },
+                  "legend": { "title": "Revenue" },
+                  "displayName": "Revenue"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Revenue by Region and Product (Heatmap)"
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 29, "width": 6, "height": 4 },
+          "widget": {
+            "name": "wHistogramTripDistance",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "rides01",
+                  "fields": [
+                    { "name": "trip_distance", "expression": "`trip_distance`" }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "trip_distance",
+                  "scale": { "type": "quantitative" },
+                  "axis": { "title": "Trip distance" },
+                  "bin": { "maxBins": 30 }
+                },
+                "y": {
+                  "axis": { "title": "Count" }
+                },
+                "color": { "legend": { "hide": true } }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Trip Distance Distribution (Histogram)"
+              }
+            }
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ]
+}

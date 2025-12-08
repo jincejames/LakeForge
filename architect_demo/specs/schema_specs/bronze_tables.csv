@@ -1,0 +1,100 @@
+table_name,column_name,data_type,nullable,description,notes
+bronze.incident,sys_id,STRING,false,ServiceNow unique record identifier,Primary key - from LakeFlow
+bronze.incident,number,STRING,true,Incident number (e.g. INC0010001),Human-readable identifier
+bronze.incident,short_description,STRING,true,Brief incident summary,User-provided text
+bronze.incident,description,STRING,true,Full incident description,User-provided text
+bronze.incident,state,INT,true,Incident state code,1=New 2=InProgress 6=Resolved 7=Closed
+bronze.incident,incident_state,INT,true,Detailed incident state,Numeric code
+bronze.incident,priority,INT,true,Priority level,1=Critical to 5=Planning
+bronze.incident,urgency,INT,true,Urgency level,1-3 scale
+bronze.incident,impact,INT,true,Business impact level,1-3 scale
+bronze.incident,severity,INT,true,Severity classification,Numeric code
+bronze.incident,category,STRING,true,Incident category,Top-level classification
+bronze.incident,subcategory,STRING,true,Incident subcategory,Detailed classification
+bronze.incident,opened_at,TIMESTAMP,true,When incident was opened,Datetime
+bronze.incident,opened_by,"STRUCT<link:STRING,value:STRING>",true,User who opened the incident,Flatten in silver
+bronze.incident,caller_id,"STRUCT<link:STRING,value:STRING>",true,User who reported the incident,Flatten in silver
+bronze.incident,assigned_to,"STRUCT<link:STRING,value:STRING>",true,Assigned technician,Flatten in silver
+bronze.incident,assignment_group,"STRUCT<link:STRING,value:STRING>",true,Assigned support group,Flatten in silver
+bronze.incident,resolved_at,TIMESTAMP,true,When incident was resolved,Nullable if still open
+bronze.incident,resolved_by,"STRUCT<link:STRING,value:STRING>",true,User who resolved the incident,Flatten in silver
+bronze.incident,closed_at,TIMESTAMP,true,When incident was closed,Nullable if still open
+bronze.incident,closed_by,"STRUCT<link:STRING,value:STRING>",true,User who closed the incident,Flatten in silver
+bronze.incident,close_code,STRING,true,Resolution close code,Categorical
+bronze.incident,close_notes,STRING,true,Resolution notes,User-provided text
+bronze.incident,sys_created_on,TIMESTAMP,true,ServiceNow record creation time,System timestamp
+bronze.incident,sys_created_by,STRING,true,User who created record,System field
+bronze.incident,sys_updated_on,TIMESTAMP,true,Last ServiceNow update time,System timestamp - watermark candidate
+bronze.incident,sys_updated_by,STRING,true,User who last updated record,System field
+bronze.incident,sys_mod_count,INT,true,Modification counter,Update tracking
+bronze.incident,active,BOOLEAN,true,Is incident active,Quick filter flag
+bronze.incident,made_sla,BOOLEAN,true,Was SLA met,SLA tracking
+bronze.incident,knowledge,BOOLEAN,true,Knowledge article created,Knowledge management
+bronze.incident,parent,"STRUCT<link:STRING,value:STRING>",true,Parent incident reference,Flatten in silver
+bronze.incident,parent_incident,"STRUCT<link:STRING,value:STRING>",true,Parent incident for major incidents,Flatten in silver
+bronze.incident,child_incidents,INT,true,Count of child incidents,Aggregation field
+bronze.incident,caused_by,"STRUCT<link:STRING,value:STRING>",true,Related change/problem,Flatten in silver
+bronze.incident,problem_id,"STRUCT<link:STRING,value:STRING>",true,Linked problem record,Flatten in silver
+bronze.incident,rfc,"STRUCT<link:STRING,value:STRING>",true,Related change request,Flatten in silver
+bronze.incident,cmdb_ci,"STRUCT<link:STRING,value:STRING>",true,Configuration item affected,Flatten in silver
+bronze.incident,business_service,"STRUCT<link:STRING,value:STRING>",true,Impacted business service,Flatten in silver
+bronze.incident,service_offering,"STRUCT<link:STRING,value:STRING>",true,Service offering reference,Flatten in silver
+bronze.incident,company,"STRUCT<link:STRING,value:STRING>",true,Company reference,Flatten in silver
+bronze.incident,location,"STRUCT<link:STRING,value:STRING>",true,Physical location reference,Flatten in silver
+bronze.incident,contact_type,STRING,true,How incident was reported,Channel tracking
+bronze.incident,escalation,INT,true,Escalation level,Numeric code
+bronze.incident,reassignment_count,INT,true,Number of reassignments,Efficiency metric
+bronze.incident,reopen_count,INT,true,Number of reopens,Quality metric
+bronze.incident,calendar_duration,STRING,true,Total calendar time,Duration string
+bronze.incident,calendar_stc,INT,true,Calendar time in seconds,Duration numeric
+bronze.incident,business_duration,STRING,true,Business hours duration,Duration string
+bronze.incident,business_stc,INT,true,Business time in seconds,Duration numeric
+bronze.incident,business_impact,STRING,true,Business impact description,Text field
+bronze.incident,time_worked,STRING,true,Time spent on incident,Duration string
+bronze.incident,work_start,TIMESTAMP,true,When work started,Datetime
+bronze.incident,work_end,TIMESTAMP,true,When work ended,Datetime
+bronze.incident,work_notes,STRING,true,Work notes (internal),Journal field
+bronze.incident,work_notes_list,STRING,true,Work notes user list,User references
+bronze.incident,comments,STRING,true,Customer-visible comments,Journal field
+bronze.incident,comments_and_work_notes,STRING,true,Combined notes,Journal field
+bronze.incident,additional_assignee_list,STRING,true,Additional assignees,User list
+bronze.incident,approval,STRING,true,Approval status,Workflow state
+bronze.incident,approval_set,TIMESTAMP,true,When approval was set,Datetime
+bronze.incident,approval_history,STRING,true,Approval history log,Text field
+bronze.incident,upon_approval,STRING,true,Action upon approval,Workflow config
+bronze.incident,upon_reject,STRING,true,Action upon rejection,Workflow config
+bronze.incident,rejection_goto,"STRUCT<link:STRING,value:STRING>",true,Next step on rejection,Flatten in silver
+bronze.incident,wf_activity,"STRUCT<link:STRING,value:STRING>",true,Current workflow activity,Flatten in silver
+bronze.incident,expected_start,TIMESTAMP,true,Expected start time,SLA planning
+bronze.incident,follow_up,TIMESTAMP,true,Follow-up date,Reminder
+bronze.incident,due_date,TIMESTAMP,true,SLA due date,SLA tracking
+bronze.incident,sla_due,STRING,true,SLA due status,SLA state
+bronze.incident,activity_due,STRING,true,Next activity due,Task tracking
+bronze.incident,notify,INT,true,Notification level,Notification config
+bronze.incident,reopened_by,"STRUCT<link:STRING,value:STRING>",true,User who reopened,Flatten in silver
+bronze.incident,reopened_time,TIMESTAMP,true,When reopened,Datetime
+bronze.incident,contract,"STRUCT<link:STRING,value:STRING>",true,Contract reference,Flatten in silver
+bronze.incident,delivery_plan,"STRUCT<link:STRING,value:STRING>",true,Delivery plan reference,Flatten in silver
+bronze.incident,delivery_task,"STRUCT<link:STRING,value:STRING>",true,Delivery task reference,Flatten in silver
+bronze.incident,universal_request,"STRUCT<link:STRING,value:STRING>",true,Universal request reference,Flatten in silver
+bronze.incident,cause,STRING,true,Root cause description,RCA field
+bronze.incident,order,INT,true,Display order,UI ordering
+bronze.incident,hold_reason,INT,true,Hold reason code,Workflow state
+bronze.incident,route_reason,INT,true,Routing reason code,Assignment logic
+bronze.incident,origin_id,STRING,true,External origin ID,Integration tracking
+bronze.incident,origin_table,STRING,true,External origin table,Integration tracking
+bronze.incident,correlation_id,STRING,true,Correlation identifier,Event correlation
+bronze.incident,correlation_display,STRING,true,Correlation display value,Event correlation
+bronze.incident,group_list,STRING,true,Related groups list,Group references
+bronze.incident,watch_list,STRING,true,Users watching incident,Notification list
+bronze.incident,user_input,STRING,true,User input field,Custom field
+bronze.incident,variables,STRING,true,Custom variables JSON,Dynamic fields
+bronze.incident,task_effective_number,STRING,true,Effective task number,Task hierarchy
+bronze.incident,sys_class_name,STRING,true,ServiceNow class name,Object type
+bronze.incident,sys_domain,STRING,true,Domain path,Multi-tenancy
+bronze.incident,sys_domain_path,STRING,true,Full domain path,Multi-tenancy
+bronze.incident,sys_tags,STRING,true,Tags,Categorization
+bronze.incident,_databricks_deleted,BOOLEAN,true,Soft delete flag,LakeFlow managed
+bronze.incident,__START_AT,TIMESTAMP,true,SCD2 validity start,LakeFlow managed
+bronze.incident,__END_AT,TIMESTAMP,true,SCD2 validity end,LakeFlow managed
+

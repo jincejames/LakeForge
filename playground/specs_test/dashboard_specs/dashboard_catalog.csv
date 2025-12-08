@@ -1,0 +1,6 @@
+dashboard_name,purpose,primary_gold_table
+Sales Overview,Monitor daily revenue and orders,gold.sales_dashboard_metrics
+Product Performance,Track monthly product sales and returns,gold.product_sales_by_month
+Customer 360 & AI Features,Analyze CLV,gold.customer_lifetime_value_features
+Cohort Retention,Measure retention by acquisition cohort,gold.cohort_retention
+Executive Summary,Top-level KPIs and trends,Multiple (rollups)

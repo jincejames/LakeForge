@@ -1,0 +1,2 @@
+- Make sure to safe cast Target table columns to match column type and length to avoid datatype mismatch error.
+- Make sure to add explicit schema casting for dim_time.

@@ -1,0 +1,52 @@
+{
+  "steps": [
+    {
+      "step": 1,
+      "description": "Initial a project inside a folder with name \"demo\" using databricks asset bundle."
+    },
+    {
+      "step": 2,
+      "description": "Build bundle configuration from workspace and catalog details (only dev is needed) in specs/databricks_specs folder."
+    },
+    {
+      "step": 3,
+      "description": "Create python notebooks needed for schema and tables creation as per the specs/schema_specs folder, catalog must exists do not include creation code in the notebooks."
+    },
+    {
+      "step": 4,
+      "description": "Create python notebooks needed for loading the tables and job resource to orchestrate them as in specs/transformation_specs."
+    },
+    {
+      "step": 5,
+      "description": "Include data quality quality controls in the transformation python notebooks as per the specs/transformation_specs/data_quality_specs, please use existing `databricks-labs-dqx` library version 0.9.3, refer to the docs in https://databrickslabs.github.io/dqx/, on how to use it (do not create own implementation)."
+    },
+    {
+      "step": 6,
+      "description": "Build AI BI Dashboard resource json(sample json as in specs/dashboard_specs/sample_dashboard.json) as per each dashboard specs in specs/dashboard_specs. Refer to the official document one how to generate dashboard json. once json generated , make sure to refer it in the resources yml. As this is complex task, suggest to use databricks sdk (`databricks-sdk>=0.57.0`) for dashboard json creation."
+    },
+    {
+      "step": 7,
+      "description": "Must Create proper unit tests for the common utils, should test these utils , do do not create own isolated tests."
+    },
+    {
+      "step": 8,
+      "description": "Run the unit tests on local spark (create & consider dedicated virtual envrionment and install all the needed libararies including databricks-labs-dqx) and fix if there are any issues."
+    },
+    {
+      "step": 9,
+      "description": "Also generate script and join to generate and load sample data into bronze tables."
+    },
+    {
+      "step": 10,
+      "description": "Before deploying the notebooks make sure the transformation code has mapped the target table column data types properly."
+    },
+    {
+      "step": 11,
+      "description": "Deploy project code and jobs & dashboard resources using databricks cli (bundle) into dev workspace. Must exclude the files to be ignored (e.g. as per .gitignore)."
+    },
+    {
+      "step": 12,
+      "description": "Run the deployed jobs in the correct order."
+    }
+  ]
+}

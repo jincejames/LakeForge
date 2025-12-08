@@ -1,0 +1,7 @@
+dimension_name,grain,source_table,key_column,attributes,SCD_type,notes
+date,Day,gold.sales_dashboard_metrics,metric_date,"year,month,week_of_year,day_of_week",None,Sourced upstream from dim_time
+month,Month,gold.product_sales_by_month,month,"year,month_number",None,Calendar month grain
+channel,Channel,gold.sales_dashboard_metrics,channel,"channel_group",None,Conformed values: WEB; STORE; APP
+product,Product,gold.product_sales_by_month,product_id,"name,category,is_active",None,Display attributes via join to dim_product
+customer,Customer,gold.customer_lifetime_value_features,customer_id,"name,email,country_code",SCD2 (silver),Use current snapshot in gold views
+cohort,Acquisition Cohort,gold.cohort_retention,cohort_month,"year,month_number",None,Derived from first order month

@@ -1,0 +1,11 @@
+dashboard_name,widget_or_metric,source_table,source_fields,aggregation,grain,parameter_bindings,notes
+Sales Overview,Total Sales,gold.sales_dashboard_metrics,total_sales,SUM,Day,:date_range; :channel,Primary KPI
+Sales Overview,Orders by Channel,gold.sales_dashboard_metrics,orders_web; orders_store,SUM,Day,:date_range,Stacked bar
+Sales Overview,AOV Trend,gold.sales_dashboard_metrics,avg_order_value,AVG,Day,:date_range,Sparkline or line
+Product Performance,Top Products by Revenue,gold.product_sales_by_month,revenue,SUM,Month,:month,Horizontal bar
+Product Performance,Returns Rate Heatmap,gold.product_sales_by_month,returns_rate,AVG,Month,:month,Quality hotspot
+Customer 360 & AI Features,Churn Risk Scatter,gold.customer_lifetime_value_features,churn_risk_score,AVG,Customer,:country; :risk_decile,Segment focus
+Customer 360 & AI Features,Recency Histogram,gold.customer_lifetime_value_features,recency_days,AVG,Customer,:country,Engagement distribution
+Cohort Retention,Cohort Matrix,gold.cohort_retention,retention_rate,AVG,Cohort Month + Month Offset,:cohort_month,Heatmap grid
+Executive Summary,12-Mo Sales Trend,gold.sales_dashboard_metrics,total_sales,SUM,Month,:month,Sparkline
+Executive Summary,Channel Mini Charts,gold.sales_dashboard_metrics,total_orders,SUM,Month,:month; :channel,Small multiples

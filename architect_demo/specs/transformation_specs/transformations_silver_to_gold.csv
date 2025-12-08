@@ -1,0 +1,31 @@
+source_table,target_table,transformation_name,description,expression_sql,notes
+silver.incident_flattened,gold.incident_daily_metrics,agg_daily_opened,Count incidents opened per day,"COUNT(*) FILTER (WHERE opened_date = metric_date) AS total_incidents_opened",Group by opened_date
+silver.incident_flattened,gold.incident_daily_metrics,agg_daily_resolved,Count incidents resolved per day,"COUNT(*) FILTER (WHERE resolved_date = metric_date) AS total_incidents_resolved",Group by resolved_date
+silver.incident_flattened,gold.incident_daily_metrics,agg_daily_closed,Count incidents closed per day,"COUNT(*) FILTER (WHERE closed_date = metric_date) AS total_incidents_closed",Group by closed_date
+silver.incident_flattened,gold.incident_daily_metrics,agg_critical_opened,Count P1 incidents opened,"COUNT(*) FILTER (WHERE priority = 1 AND opened_date = metric_date) AS critical_incidents_opened",Priority 1 filter
+silver.incident_flattened,gold.incident_daily_metrics,agg_high_opened,Count P2 incidents opened,"COUNT(*) FILTER (WHERE priority = 2 AND opened_date = metric_date) AS high_incidents_opened",Priority 2 filter
+silver.incident_flattened,gold.incident_daily_metrics,agg_avg_resolution_time,Average resolution time for day,"AVG(time_to_resolve_hours) AS avg_time_to_resolve_hours",Only resolved incidents
+silver.incident_flattened,gold.incident_daily_metrics,agg_p50_resolution_time,Median resolution time,"PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY time_to_resolve_hours) AS p50_time_to_resolve_hours",50th percentile
+silver.incident_flattened,gold.incident_daily_metrics,agg_p95_resolution_time,95th percentile resolution time,"PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY time_to_resolve_hours) AS p95_time_to_resolve_hours",95th percentile
+silver.incident_flattened,gold.incident_daily_metrics,agg_sla_met,Count SLA met incidents,"COUNT(*) FILTER (WHERE made_sla = true AND resolved_date = metric_date) AS sla_met_count",SLA success count
+silver.incident_flattened,gold.incident_daily_metrics,agg_sla_missed,Count SLA missed incidents,"COUNT(*) FILTER (WHERE made_sla = false AND resolved_date = metric_date) AS sla_missed_count",SLA failure count
+silver.incident_flattened,gold.incident_daily_metrics,calc_sla_compliance,Calculate SLA compliance rate,"ROUND(sla_met_count * 100.0 / NULLIF(sla_met_count + sla_missed_count, 0), 2) AS sla_compliance_rate",Handle division by zero
+silver.incident_flattened,gold.incident_daily_metrics,agg_avg_reassignments,Average reassignments for day,"AVG(reassignment_count) AS avg_reassignments",Efficiency metric
+silver.incident_flattened,gold.incident_daily_metrics,agg_avg_reopens,Average reopens for day,"AVG(reopen_count) AS avg_reopens",Quality metric
+silver.incident_flattened,gold.incident_by_category,agg_by_category_month,Aggregate incidents by category and month,"COUNT(*) AS total_incidents GROUP BY category, subcategory, DATE_TRUNC('month', opened_date)",Monthly grain
+silver.incident_flattened,gold.incident_by_category,agg_critical_by_category,Count critical incidents by category,"COUNT(*) FILTER (WHERE priority = 1) AS critical_incidents",Severity analysis
+silver.incident_flattened,gold.incident_by_category,agg_high_by_category,Count high priority by category,"COUNT(*) FILTER (WHERE priority = 2) AS high_incidents",Severity analysis
+silver.incident_flattened,gold.incident_by_category,calc_category_share,Calculate category share of total,"COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY period_month) AS category_share_pct",Window function
+silver.incident_flattened,gold.incident_by_assignment_group,agg_by_group_month,Aggregate by assignment group and month,"COUNT(*) AS total_assigned GROUP BY assignment_group_id, DATE_TRUNC('month', opened_date)",Monthly grain
+silver.incident_flattened,gold.incident_by_assignment_group,agg_resolved_by_group,Count resolved by group,"COUNT(*) FILTER (WHERE resolved_at IS NOT NULL) AS total_resolved",Resolution tracking
+silver.incident_flattened,gold.incident_by_assignment_group,calc_resolution_rate,Calculate resolution rate,"ROUND(total_resolved * 100.0 / NULLIF(total_assigned, 0), 2) AS resolution_rate",Team efficiency
+silver.incident_current,gold.incident_backlog_snapshot,snapshot_open_by_priority,Count open incidents by priority per snapshot date,"COUNT(*) AS open_incidents WHERE state NOT IN (6, 7) GROUP BY snapshot_date, priority",Daily backlog
+silver.incident_current,gold.incident_backlog_snapshot,calc_aged_7_days,Count incidents open > 7 days,"COUNT(*) FILTER (WHERE DATEDIFF(snapshot_date, opened_date) > 7) AS aged_7_days",Aging bucket
+silver.incident_current,gold.incident_backlog_snapshot,calc_aged_14_days,Count incidents open > 14 days,"COUNT(*) FILTER (WHERE DATEDIFF(snapshot_date, opened_date) > 14) AS aged_14_days",Aging bucket
+silver.incident_current,gold.incident_backlog_snapshot,calc_aged_30_days,Count incidents open > 30 days,"COUNT(*) FILTER (WHERE DATEDIFF(snapshot_date, opened_date) > 30) AS aged_30_days",Aging bucket
+silver.incident_current,gold.incident_backlog_snapshot,calc_avg_age,Calculate average age of open incidents,"AVG(DATEDIFF(snapshot_date, opened_date)) AS avg_age_days",Age metric
+silver.incident_flattened,gold.incident_trend_weekly,agg_weekly_opened,Count weekly opened,"COUNT(*) AS total_opened GROUP BY DATE_TRUNC('week', opened_date)",ISO week
+silver.incident_flattened,gold.incident_trend_weekly,agg_weekly_closed,Count weekly closed,"COUNT(*) AS total_closed GROUP BY DATE_TRUNC('week', closed_date)",ISO week
+silver.incident_flattened,gold.incident_trend_weekly,calc_net_change,Calculate weekly net change,total_opened - total_closed AS net_change,Backlog trend
+silver.incident_flattened,gold.incident_trend_weekly,calc_wow_change,Week-over-week % change,"ROUND((total_opened - LAG(total_opened) OVER (ORDER BY week_start_date)) * 100.0 / NULLIF(LAG(total_opened) OVER (ORDER BY week_start_date), 0), 2) AS week_over_week_opened_pct",Trend analysis
+
