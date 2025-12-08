@@ -1,0 +1,290 @@
+{
+    "name": "exp-lakeforge",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          -64
+        ],
+        "id": "323977a9-7c65-426b-9707-0935cb92a2e8",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://127.0.0.1:8000/execute",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "command",
+                "value": "=cursor-agent -p --force 'Split Build_BI_Use_Case.md into instructions.md file and steps.json file example schema { \"steps\": [ { \"step\": 1, \"description\": \"step description placeholder.\" } ] }'"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          224,
+          -64
+        ],
+        "id": "1e3a7541-6e4d-4e76-a017-38ff5727da82",
+        "name": "Process Usecase Split into Steps / Instructions",
+        "notesInFlow": false,
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://127.0.0.1:8000/execute",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "command",
+                "value": "=cursor-agent -p --force 'Read the following instructions \"{{ $('Extract Fields').item.json.Instructions }}\" check the change-log.md and then execute only this step \"{{ $json.description }}\" once done add your changes to the end of change-log.md'"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1568,
+          -64
+        ],
+        "id": "b3f71e35-3de1-4b2b-b739-840272281651",
+        "name": "Execute Step",
+        "notesInFlow": false,
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "command": "=jq -n \\\n  --rawfile md /Users/hudhaifa.ahmed/exp-lakeforge/instructions.md \\\n  --slurpfile js /Users/hudhaifa.ahmed/exp-lakeforge/steps.json \\\n  '{fullInstructions: $md, stepToExecute: $js}'\n"
+        },
+        "type": "n8n-nodes-base.executeCommand",
+        "typeVersion": 1,
+        "position": [
+          448,
+          -64
+        ],
+        "id": "663e6a1d-b158-4077-b3a6-993058d75d7c",
+        "name": "Load Instructions and Steps"
+      },
+      {
+        "parameters": {
+          "maxItems": 2
+        },
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          -64
+        ],
+        "id": "03ee6fcd-62a8-4d36-b616-a9112e6165cf",
+        "name": "Limit Steps"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "StepsToExecute[0].steps",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          896,
+          -64
+        ],
+        "id": "f0a1a724-fee7-427c-b47f-11c96931e9d5",
+        "name": "Map Steps to Array"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "523730db-e15e-42a1-aafb-ac23d14833ac",
+                "name": "StepsToExecute",
+                "value": "={{ JSON.stringify(JSON.parse($json[\"stdout\"]).stepToExecute) }}",
+                "type": "array"
+              },
+              {
+                "id": "121e904e-c983-48a7-b494-33ffd62b54d6",
+                "name": "Instructions",
+                "value": "={{ JSON.stringify(JSON.parse($json[\"stdout\"]).fullInstructions) }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          672,
+          -64
+        ],
+        "id": "9f065864-e8f4-40cf-ae68-29750f8dd079",
+        "name": "Extract Fields"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1344,
+          -64
+        ],
+        "id": "cb57724a-0040-48cc-9626-c8d8a6ffa848",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://127.0.0.1:8000/execute",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "command",
+                "value": "=cursor-agent -p --force 'Read the following instructions \"{{ $('Extract Fields').item.json.Instructions }}\" check the change-log.md and then validate if the following step has been implemented successfully {{ $('Loop Over Items').item.json.description }}, report any errors or issues found'"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1792,
+          -64
+        ],
+        "id": "d29343cc-5b55-45c2-bc0a-5e1806ebab63",
+        "name": "Validation Step",
+        "notesInFlow": false,
+        "alwaysOutputData": false
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Process Usecase Split into Steps / Instructions",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process Usecase Split into Steps / Instructions": {
+        "main": [
+          [
+            {
+              "node": "Load Instructions and Steps",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Instructions and Steps": {
+        "main": [
+          [
+            {
+              "node": "Extract Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit Steps": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Map Steps to Array": {
+        "main": [
+          [
+            {
+              "node": "Limit Steps",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Fields": {
+        "main": [
+          [
+            {
+              "node": "Map Steps to Array",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Execute Step",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Execute Step": {
+        "main": [
+          [
+            {
+              "node": "Validation Step",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Validation Step": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "b3902069-42a2-4e1f-8c53-dd53af799851",
+    "meta": {
+      "instanceId": "8e6e045e651645ceab20bf65b2da0dab539d33f477999361382c913145122547"
+    },
+    "id": "h0zofos4zVkBm3Mz",
+    "tags": []
+  }
+  
