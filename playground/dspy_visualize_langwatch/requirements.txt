@@ -1,0 +1,4 @@
+dspy>=2.5.0
+langwatch>=0.1.0
+databricks-dspy>=0.1.0
+
