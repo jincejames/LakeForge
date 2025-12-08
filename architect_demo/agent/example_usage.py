@@ -28,7 +28,7 @@ def example_full_control():
     
     # Initialize agent with model choice and MLflow experiment
     agent = ArchitectAgent(
-        model="claude-sonnet",  # or "claude-opus" for more complex designs
+        model="claude-opus",  # or "claude-opus" for more complex designs
         experiment_name="servicenow-lakehouse-design",
     )
     

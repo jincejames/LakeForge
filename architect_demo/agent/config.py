@@ -173,6 +173,18 @@ def load_specs_from_folder(specs_folder: str) -> dict:
     import yaml
     
     specs_path = Path(specs_folder)
+    
+    # If relative path, resolve from project root (parent of architect_demo/agent)
+    if not specs_path.is_absolute():
+        project_root = Path(__file__).parent.parent.parent
+        specs_path = project_root / specs_folder
+    
+    specs_path = specs_path.resolve()
+    logger.info("Loading specs from: %s", specs_path)
+    
+    if not specs_path.exists():
+        raise FileNotFoundError(f"Specs folder not found: {specs_path}")
+    
     specs = {}
     
     # Load CSV specs
@@ -190,10 +202,10 @@ def load_specs_from_folder(specs_folder: str) -> dict:
             with open(file_path, newline="", encoding="utf-8") as f:
                 reader = csv.DictReader(f)
                 specs[key] = list(reader)
-            logger.info("Loaded %s: %d rows", key, len(specs[key]))
+            logger.info("Loaded %s: %d rows from %s", key, len(specs[key]), file_path)
         else:
             specs[key] = []
-            logger.warning("Spec file not found: %s", file_path)
+            logger.warning("Spec file not found: %s (looked at %s)", rel_path, file_path.resolve())
     
     # Load YAML pipeline config
     pipeline_files = list((specs_path / "pipeline_specs").glob("*.yaml"))
