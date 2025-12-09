@@ -1,3 +1,10 @@
+# How to run the cli proxy
+# uvicorn cli-proxy:app --reload --host 127.0.0.1 --port 8000
+
+# How to run cursor in cli mode
+# cursor-agent -p --force "What files are in this project"
+
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import subprocess
@@ -18,7 +25,7 @@ async def execute_command(request: CommandRequest):
             shell=True,
             capture_output=True,
             text=True,
-            timeout=3000
+            timeout=30000
         )
         
         return {
